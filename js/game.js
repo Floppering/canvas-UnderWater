@@ -50,28 +50,7 @@
 /****************************/
 
 // Движущееся фоновое изображение
-class ScrollBackground {
-    constructor (imageName, w, h, scrollSpeed) {
-        this.img = IMG[imageName];
-        this.x = Math.floor((vw -  w) / 2) ;
-        this.y1 = -h;
-        this.y2 = 0;
-        this.h = h;
-        this.scrollSpeed = scrollSpeed;
-    }
 
-    update(dt) {
-        let speed = this.scrollSpeed * dt;
-        this.y1 += speed;
-        this.y2 += speed;
-        if (this.y2 >= this.h) {
-            this.y1 = -this.h;
-            this.y2 = 0;
-        }
-        ctx.drawImage(this.img, this.x, this.y1);
-        ctx.drawImage(this.img, this.x, this.y2);
-    }
-}
 
 // Игровой курсор
 class GameCursor extends SpriteSheet {
@@ -88,10 +67,10 @@ class GameCursor extends SpriteSheet {
 }
 
 // PLAYER
-class Player extends SpriteSheet {
+class Player extends Sprite {
     constructor() {
-        // class SpriteSheet (imageName, x, y, fw, fh, frames, fps = 60)
-        super('player_Submarine_74x150.png', vcx, vcy * 1.5, 74, 150, 16, 30);
+        // class Sprite (imageName, x, y )
+        super('player_Submarine_74x150.png', vcx, vcy * 1.5);
 
         this.speed = 0.1;
         this.size = 35;
@@ -142,7 +121,7 @@ class Player extends SpriteSheet {
         }
         this.rocketsArr = getExistsObjectsFromArr(this.rocketsArr);
     
-        this.drawWithAnimation(dt);
+        this.draw();
     }
     
     setDamage( damageSize ) {
@@ -675,7 +654,7 @@ const player = new Player();
 
 // ФОНЫ
 //               class ScrollBackground(imageName, w, h, scrollSpeed)
-const background = new ScrollBackground('scrolling_bg_2000x3400px.png', 2000, 3400, 0.01);
+const background = new ScrollBackground('Underwater_BG_Blank_2000x3400px.png', 2000, 3400, 0.01);
 
 // ИГРОВОЙ КУРСОР
 //               class GameCursor()
@@ -689,7 +668,7 @@ const GAME_OVER_TEXT = new Text('GAME OVER', vcx, vcy - 250, 70, '#ff0000');
 // ИГРОВОЙ ЦИКЛ
 function gameLoop(dt) {
     // обновляем основной фон и дополнительные фоны
-    background.update(dt);
+    //background.update(dt);
 
     // обновляем курсор
     gameCursor.update(dt);

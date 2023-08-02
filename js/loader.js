@@ -18,7 +18,7 @@ const SOUNDS_PATH = './src/sounds/';
 const IMAGES_UPLOAD_ARR = [
     'scrolling_bg_2000x3400px.png',
     'player_cursor_48x48px_16frames.png',
-    'player_Submarine_74x15.png',
+    'player_Submarine_74x150.png',
     'player_bullet_10x40px.png',
     'asteroid_90x108px_29frames.png',
     'explosion_200x200px_16frames.png',
