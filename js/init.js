@@ -266,9 +266,7 @@ const BG_MUSIC = new Audio();
 
 // список фоновых музык
 const bgMusicsArr = [
-    'bgm_space_1.mp3',
-    'bgm_space_2.mp3',
-    'bgm_space_3.mp3',
+    'Summer Sunday.wav',
 ];
 
 // индекс фоновой музыки для воспроизведения
@@ -277,6 +275,7 @@ let bgMusicIndex = 0;
 // плеер фоновой музыки
 function playBgMusic() {
     BG_MUSIC.src = SOUNDS_PATH + bgMusicsArr[bgMusicIndex];
+    BG_MUSIC.volume = 0.5;
     BG_MUSIC.play();
     bgMusicIndex++;
     if (bgMusicIndex === bgMusicsArr.length) bgMusicIndex = 0;

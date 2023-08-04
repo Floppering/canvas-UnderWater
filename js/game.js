@@ -221,7 +221,7 @@ class Explosion extends SpriteSheet {
 }
 
 // ASTEROID
-class Asteroid extends SpriteSheet {
+class Eej extends SpriteSheet {
     constructor(x, y, speed) {
         // class SpriteSheet (imageName, x, y, fw, fh, frames, fps = 60)
         super('asteroid_90x108px_29frames.png', x, y, 90, 108, 29, 30);
@@ -357,9 +357,76 @@ class EasyEnemy extends Sprite {
     }
 }
 
+// ENEMY
+class NormalEnemy extends Sprite {
+    constructor(x, y) {
+        super('devilfish_102x240px.png', x, y);
+        this.speed = 0.05 + Math.random() * 0.05; // 0.02 ... 0.04
+        this.hp = 2;
+        this.size = 24;
+        this.damage = 16;
+        this.isExist = true;
+        this.turnSpeed = 0.001;
+        
+
+    }
+
+    // ОБНОВЛЕНИЕ
+    update(dt) {
+        turnTo( this, player, this.turnSpeed*dt )
+         moveTo( this, player, this.speed*dt )
+       
+
+        // проверка столкновений с пулями игрока
+        for (let i = 0; i < player.bulletsArr.length; i++) {
+            if (getDistance(this, player.bulletsArr[i]) < this.size) {
+                player.bulletsArr[i].isExist = false;
+                this.hp--;
+                player.setScores(1);
+                if (this.hp < 1) {
+                    player.setScores(10);
+                    this.destroyed();
+                    // add BONUS
+                    bonusesArr.push( new Bonus(this.x, this.y) );
+                    return;
+                }
+            }
+        }
+
+         // проверка столкновений с рокетой игрока
+         for (let i = 0; i < player.rocketsArr.length; i++) {
+            if (getDistance(this, player.rocketsArr[i]) < this.size) {
+                player.rocketsArr[i].isExist = false;
+                player.rockets++;
+                this.hp = 0;
+                player.setScores(5);
+                this.destroyed();
+                return;
+            }
+        }
+
+        // проверка столкновения с игроком 
+        if (getDistance(this, player) < this.size + player.size) {
+            player.setDamage(this.damage);
+            this.destroyed(false);
+            return;
+        }
+
+        this.draw();
+    }
+
+    // УНИЧТОЖЕНИЕ
+    destroyed() {
+        maxEnemies += 0.3;
+        //                class Explosion(x, y)
+        explosionsArr.push( new Explosion(this.x, this.y));
+        this.isExist = false;
+    }
+}
+
 class MediumEnemy extends Sprite {
     constructor(x, y) {
-        super('enemy_100x130px.png', x, y);
+        super('bigoctopus_170x170px.png', x, y);
         this.speed = 0.03 + Math.random() * 0.03; // 0.03 ... 0.06
         this.sideSpeed = this.speed / 2; // 0.015 ... 0.03
         this.hp = 4;
@@ -445,12 +512,12 @@ class MediumEnemy extends Sprite {
 
 class HardEnemy extends Sprite {
     constructor(x, y) {
-        super('enemy_120x120px.png', x, y);
+        super('warden_120x120px.png', x, y);
         this.speed = 0.01 + Math.random() * 0.01; // 0.01 ... 0.02
         this.turnSpeed = 0.001;
         this.hp = 5;
         this.size = 56;
-        this.damage = 50;
+        this.damage = 30;
         this.isExist = true;
 
         this.shutSpeed = 1500 + Math.floor(Math.random() * 500);
@@ -462,7 +529,6 @@ class HardEnemy extends Sprite {
 
     // ОБНОВЛЕНИЕ
     update(dt) {
-        this.direction += this.turnSpeed * dt;
         moveTo(this, player, this.speed * dt);
         // проверка столкновения с игроком 
         if (getDistance(this, player) < this.size + player.size) {
@@ -606,6 +672,7 @@ let enemiesArr = [];
 function addEnemy() {
 
     let enemyType = Math.floor(maxEnemies * Math.random());
+    
     let xx, yy;
     switch( enemyType ) {
         case 0 : 
@@ -614,12 +681,19 @@ function addEnemy() {
             yy = -100 - Math.floor(Math.random() * vcy);
             enemiesArr.push( new EasyEnemy(xx, yy) );
             break;
+
         case 2 : 
+            xx = 25 + Math.floor(Math.random() * (vw - 50));
+            yy = -100 - Math.floor(Math.random() * vcy);
+            enemiesArr.push( new NormalEnemy(xx, yy) );
+            break;
+
+        case 3 : 
             xx = 25 + Math.floor(Math.random() * (vw - 50));
             yy = -150 - Math.floor(Math.random() * vcy);
             enemiesArr.push( new MediumEnemy(xx, yy) );
             break;
-        case 3 : 
+        case 4 : 
             xx = 60 + Math.floor(Math.random() * (vw - 120));
             yy = -120 - Math.floor(Math.random() * vcy);
             enemiesArr.push( new HardEnemy(xx, yy) );
@@ -635,16 +709,16 @@ let enemyBulletsArr = [];
 
 ////
 
-let maxAsteroids = 3;
-let asteroidsArr = [];
+let maxEj = 3;
+let koluchkaArr = [];
 
 // функция добавления нового астероида
-function addAsteroids() {
+function addEjj() {
     let xx = 50 + Math.floor(Math.random() * (vw - 100));
     let yy = -50 - Math.floor(Math.random() * vcy);
     let speed = +((Math.ceil(Math.random() * 3)) / 20).toFixed(2);
     //               class Asteroid(x, y, speed)
-    asteroidsArr.push( new Asteroid(xx, yy, speed) );
+    koluchkaArr.push( new Eej(xx, yy, speed) );
 }
 
 
@@ -654,7 +728,7 @@ const player = new Player();
 
 // ФОНЫ
 //               class ScrollBackground(imageName, w, h, scrollSpeed)
-const background = new ScrollBackground('Underwater_BG_Blank_2000x3400px.png', 2000, 3400, 0.01);
+//const background = new ScrollBackground('Underwater_BG_Blank_2000x3400px.png', 2000, 3400, 0.01);
 
 // ИГРОВОЙ КУРСОР
 //               class GameCursor()
@@ -674,9 +748,9 @@ function gameLoop(dt) {
     gameCursor.update(dt);
 
     // обновляем астеройды
-    for (let i = 0; i < asteroidsArr.length; i++) asteroidsArr[i].update(dt);
-    asteroidsArr = getExistsObjectsFromArr(asteroidsArr);
-    if (asteroidsArr.length < maxAsteroids) addAsteroids();
+    for (let i = 0; i < EjjArr.length; i++) EjjArr[i].update(dt);
+    EjjArr = getExistsObjectsFromArr(EjjArr);
+    if (EjjArr.length < maxEjj) addEjj();
 
     // обновляем пули врагов
     for (let i = 0; i < enemyBulletsArr.length; i++) enemyBulletsArr[i].update(dt);
